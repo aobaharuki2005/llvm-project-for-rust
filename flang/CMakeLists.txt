@@ -400,9 +400,10 @@ set(HOST_LINK_VERSION)
 if (APPLE)
   set(LD_V_OUTPUT)
   execute_process(
-    COMMAND sh -c "${CMAKE_LINKER} -v 2>&1 | head -1"
+    COMMAND "${CMAKE_LINKER}" -v
     RESULT_VARIABLE HAD_ERROR
-    OUTPUT_VARIABLE LD_V_OUTPUT)
+    ERROR_VARIABLE LD_V_OUTPUT
+  )
   if (NOT HAD_ERROR)
     if ("${LD_V_OUTPUT}" MATCHES ".*ld64-([0-9.]+).*")
       string(REGEX REPLACE ".*ld64-([0-9.]+).*" "\\1" HOST_LINK_VERSION ${LD_V_OUTPUT})

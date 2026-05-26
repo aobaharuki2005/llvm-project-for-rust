@@ -1070,6 +1070,8 @@ ToolChain::CXXStdlibType ToolChain::GetCXXStdlibType(const ArgList &Args) const{
     cxxStdlibType = ToolChain::CST_Libcxx;
   else if (LibName == "libstdc++")
     cxxStdlibType = ToolChain::CST_Libstdcxx;
+  else if (LibName == "macports-libstdc++" || LibName == "libstdc++_macports")
+    cxxStdlibType = ToolChain::CST_MacPortsLibstdcxx;
   else if (LibName == "platform")
     cxxStdlibType = GetDefaultCXXStdlibType();
   else {
@@ -1206,6 +1208,7 @@ void ToolChain::AddCXXStdlibLibArgs(const ArgList &Args,
     break;
 
   case ToolChain::CST_Libstdcxx:
+  case ToolChain::CST_MacPortsLibstdcxx:
     CmdArgs.push_back("-lstdc++");
     break;
   }

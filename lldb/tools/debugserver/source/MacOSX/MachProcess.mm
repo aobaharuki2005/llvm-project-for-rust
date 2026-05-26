@@ -47,6 +47,22 @@
 #include "CFBundle.h"
 #include "CFString.h"
 
+#ifndef PLATFORM_MACOS
+#define PLATFORM_MACOS 1
+#endif
+
+#ifndef PLATFORM_IOS
+#define PLATFORM_IOS 2
+#endif
+
+#ifndef PLATFORM_TVOS
+#define PLATFORM_TVOS 3
+#endif
+
+#ifndef PLATFORM_WATCHOS
+#define PLATFORM_WATCHOS 4
+#endif
+
 #ifndef PLATFORM_BRIDGEOS
 #define PLATFORM_BRIDGEOS 5
 #endif

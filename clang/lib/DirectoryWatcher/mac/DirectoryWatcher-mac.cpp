@@ -19,6 +19,10 @@
 using namespace llvm;
 using namespace clang;
 
+#ifndef TARGET_OS_OSX
+# define TARGET_OS_OSX 1
+#endif
+
 #if TARGET_OS_OSX
 
 static void stopFSEventStream(FSEventStreamRef);
