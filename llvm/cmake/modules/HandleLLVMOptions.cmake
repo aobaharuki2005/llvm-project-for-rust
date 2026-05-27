@@ -668,9 +668,9 @@ if ( LLVM_COMPILER_IS_GCC_COMPATIBLE OR CMAKE_CXX_COMPILER_ID MATCHES "XL" )
   append("-Werror=date-time" CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
 endif( LLVM_COMPILER_IS_GCC_COMPATIBLE OR CMAKE_CXX_COMPILER_ID MATCHES "XL" )
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  append("-Werror=unguarded-availability-new" CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
-endif()
+#if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+#  append("-Werror=unguarded-availability-new" CMAKE_C_FLAGS CMAKE_CXX_FLAGS)
+#endif()
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   # LLVM data structures like llvm::User and llvm::MDNode rely on

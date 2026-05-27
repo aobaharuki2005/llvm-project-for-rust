@@ -22,7 +22,6 @@
 #if defined(__APPLE__)
 #include <mach/mach_init.h>
 #include <mach/mach_port.h>
-#include <pthread/qos.h>
 #include <sys/sysctl.h>
 #include <sys/types.h>
 #endif
@@ -186,7 +185,9 @@ void llvm::set_thread_name(const Twine &Name) {
   ::pthread_setname_np(::pthread_self(), "%s",
                        const_cast<char *>(NameStr.data()));
 #elif defined(__APPLE__)
+#if HAVE_PTHREAD_SETNAME_NP
   ::pthread_setname_np(NameStr.data());
+#endif
 #endif
 }
 
@@ -268,7 +269,7 @@ SetThreadPriorityResult llvm::set_thread_priority(ThreadPriority Priority) {
              &priority)
              ? SetThreadPriorityResult::SUCCESS
              : SetThreadPriorityResult::FAILURE;
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) && defined(PRIO_DARWIN_THREAD) && defined(PRIO_DARWIN_BG)
   // https://developer.apple.com/documentation/apple-silicon/tuning-your-code-s-performance-for-apple-silicon
   //
   // Background - Applies to work that isn’t visible to the user and may take
@@ -279,17 +280,8 @@ SetThreadPriorityResult llvm::set_thread_priority(ThreadPriority Priority) {
   // minutes to complete. Examples include downloading a document or importing
   // data. This class offers a balance between responsiveness, performance, and
   // energy efficiency.
-  const auto qosClass = [&]() {
-    switch (Priority) {
-    case ThreadPriority::Background:
-      return QOS_CLASS_BACKGROUND;
-    case ThreadPriority::Low:
-      return QOS_CLASS_UTILITY;
-    case ThreadPriority::Default:
-      return QOS_CLASS_DEFAULT;
-    }
-  }();
-  return !pthread_set_qos_class_self_np(qosClass, 0)
+ return !setpriority(PRIO_DARWIN_THREAD, 0,
+                     Priority == ThreadPriority::Default ? 0 : PRIO_DARWIN_BG)
              ? SetThreadPriorityResult::SUCCESS
              : SetThreadPriorityResult::FAILURE;
 #endif

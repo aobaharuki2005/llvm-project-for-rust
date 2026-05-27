@@ -1593,6 +1593,12 @@ void DarwinClang::AddLinkRuntimeLibArgs(const ArgList &Args,
         getTriple().getArch() != llvm::Triple::aarch64)
       CmdArgs.push_back("-lgcc_s.1");
   }
+  if (isTargetMacOS()) {
+    if (isMacosxVersionLT(10, 5))
+      CmdArgs.push_back("-lgcc_s.10.4");
+    else if (isMacosxVersionLT(10, 6))
+      CmdArgs.push_back("-lgcc_s.10.5");
+  }
   AddLinkRuntimeLib(Args, CmdArgs, "builtins");
 }
 
@@ -2583,6 +2589,16 @@ void DarwinClang::AddClangCXXStdlibIncludeArgs(
     break;
   }
 
+  case ToolChain::CST_MacPortsLibstdcxx: {
+    bool IsBaseFoundMacPorts = AddGnuCPlusPlusIncludePaths(DriverArgs, CC1Args, llvm::StringRef("@@MACPORTS_GCC_INCLUDE_DIR@@"),
+						   "",
+						   "@@MACPORTS_HOST_NAME@@",
+						   @@MACPORTS_TEST_32_64@@);
+    if (!IsBaseFoundMacPorts) {
+      getDriver().Diag(diag::warn_drv_libstdcxx_not_found);
+    }}
+    break;
+
   case ToolChain::CST_Libstdcxx:
     llvm::SmallString<128> UsrIncludeCxx = Sysroot;
     llvm::sys::path::append(UsrIncludeCxx, "usr", "include", "c++");
@@ -2640,6 +2656,10 @@ void DarwinClang::AddCXXStdlibLibArgs(const ArgList &Args,
     CmdArgs.push_back("-lc++");
     if (Args.hasArg(options::OPT_fexperimental_library))
       CmdArgs.push_back("-lc++experimental");
+    break;
+
+  case ToolChain::CST_MacPortsLibstdcxx:
+    CmdArgs.push_back("@@MACPORTS_libstdc++@@");
     break;
 
   case ToolChain::CST_Libstdcxx:
