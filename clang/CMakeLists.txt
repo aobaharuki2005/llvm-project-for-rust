@@ -347,9 +347,9 @@ set(HOST_LINK_VERSION)
 if (APPLE AND NOT CMAKE_LINKER MATCHES ".*lld.*")
   set(LD_V_OUTPUT)
   execute_process(
-    COMMAND sh -c "${CMAKE_LINKER} -v 2>&1 | head -1"
+    COMMAND "${CMAKE_LINKER}" -v
     RESULT_VARIABLE HAD_ERROR
-    OUTPUT_VARIABLE LD_V_OUTPUT
+    ERROR_VARIABLE LD_V_OUTPUT
   )
   if (HAD_ERROR)
     message(FATAL_ERROR "${CMAKE_LINKER} failed with status ${HAD_ERROR}")

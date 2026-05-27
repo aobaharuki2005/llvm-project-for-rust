@@ -34,6 +34,10 @@
 #define CPU_TYPE_ARM64_32 ((cpu_type_t)12 | 0x02000000)
 #endif
 
+#ifndef CPU_SUBTYPE_ARM64E
+#define CPU_SUBTYPE_ARM64E              ((cpu_subtype_t) 2)
+#endif
+
 typedef bool (*DNBShouldCancelCallback)(void *);
 
 void DNBInitialize();

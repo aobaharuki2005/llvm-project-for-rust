@@ -37,6 +37,9 @@
 
 #ifdef __APPLE__
 #include <copyfile.h>
+#ifndef COPYFILE_CLONE
+#define COPYFILE_CLONE  (1<<24)
+#endif
 #include <mach-o/dyld.h>
 #include <sys/attr.h>
 #if __has_include(<sys/clonefile.h>)
