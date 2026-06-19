@@ -95,6 +95,7 @@ public:
 
   enum CXXStdlibType {
     CST_Libcxx,
+    CST_MacPortsLibstdcxx,
     CST_Libstdcxx
   };
 

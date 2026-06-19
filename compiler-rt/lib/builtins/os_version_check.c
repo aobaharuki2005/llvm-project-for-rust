@@ -13,6 +13,7 @@
 
 #ifdef __APPLE__
 
+#include <AvailabilityMacros.h>
 #include <TargetConditionals.h>
 #include <assert.h>
 #include <dispatch/dispatch.h>
@@ -87,9 +88,11 @@ typedef Boolean (*CFStringGetCStringFuncTy)(CFStringRef, char *, CFIndex,
                                             CFStringEncoding);
 typedef void (*CFReleaseFuncTy)(CFTypeRef);
 
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
 extern __attribute__((weak_import))
 bool _availability_version_check(uint32_t count,
                                  dyld_build_version_t versions[]);
+#endif
 
 static void _initializeAvailabilityCheck(bool LoadPlist) {
   if (AvailabilityVersionCheck && !LoadPlist) {
@@ -99,8 +102,14 @@ static void _initializeAvailabilityCheck(bool LoadPlist) {
   }
 
   // Use the new API if it's is available.
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
   if (_availability_version_check)
     AvailabilityVersionCheck = &_availability_version_check;
+#else
+  // __attribute__((weak_import)) does not prevent Undefined symbol error on 10.14
+  AvailabilityVersionCheck = (AvailabilityVersionCheckFuncTy)dlsym(
+      RTLD_DEFAULT, "_availability_version_check");
+#endif
 
   if (AvailabilityVersionCheck && !LoadPlist) {
     // New API is supported and we're not being asked to load the plist,

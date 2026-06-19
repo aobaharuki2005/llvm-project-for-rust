@@ -32,6 +32,9 @@
 
 #ifdef __APPLE__
 #include <copyfile.h>
+#ifndef COPYFILE_CLONE
+#define COPYFILE_CLONE  (1<<24)
+#endif
 #include <mach-o/dyld.h>
 #include <sys/attr.h>
 #if __has_include(<sys/clonefile.h>)
@@ -1486,7 +1489,7 @@ namespace fs {
 std::error_code copy_file(const Twine &From, const Twine &To) {
   std::string FromS = From.str();
   std::string ToS = To.str();
-#if __has_builtin(__builtin_available)
+#if 0
   if (__builtin_available(macos 10.12, *)) {
     // Optimistically try to use clonefile() and handle errors, rather than
     // calling stat() to see if it'll work.

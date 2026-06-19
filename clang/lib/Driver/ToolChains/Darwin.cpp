@@ -2645,6 +2645,16 @@ void AppleMachO::AddClangCXXStdlibIncludeArgs(
     break;
   }
 
+  case ToolChain::CST_MacPortsLibstdcxx: {
+    bool IsBaseFoundMacPorts = AddGnuCPlusPlusIncludePaths(DriverArgs, CC1Args, llvm::StringRef("@@MACPORTS_GCC_INCLUDE_DIR@@"),
+						   "",
+						   "@@MACPORTS_HOST_NAME@@",
+						   @@MACPORTS_TEST_32_64@@);
+    if (!IsBaseFoundMacPorts) {
+      getDriver().Diag(diag::warn_drv_libstdcxx_not_found);
+    }}
+    break;
+
   case ToolChain::CST_Libstdcxx:
     AddGnuCPlusPlusIncludePaths(DriverArgs, CC1Args);
     break;
@@ -2707,6 +2717,10 @@ void AppleMachO::AddCXXStdlibLibArgs(const ArgList &Args,
     CmdArgs.push_back("-lc++");
     if (Args.hasArg(options::OPT_fexperimental_library))
       CmdArgs.push_back("-lc++experimental");
+    break;
+
+  case ToolChain::CST_MacPortsLibstdcxx:
+    CmdArgs.push_back("@@MACPORTS_libstdc++@@");
     break;
 
   case ToolChain::CST_Libstdcxx:
